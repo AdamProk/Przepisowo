@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  php:
+    container_name: "${CONTAINER_NAME_PREFIX}-php"
+    build: ./docker/php
+    volumes:
+      - ${PATH_TO_SYMFONY_PROJECT}:/var/www/html
+    ports:
+      - "80:80"
+
+  db:
+    container_name: "${CONTAINER_NAME_PREFIX}-sql"
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - ${PATH_TO_DB_DATA}:/var/lib/postgresql/data:rw
+    ports:
+      - "5432:5432"
+
+  adminer:
+    container_name: "${CONTAINER_NAME_PREFIX}-adminer"
+    image: adminer
+    ports:
+      - "8080:8080"

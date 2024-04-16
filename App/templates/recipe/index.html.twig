@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{{asset('styles/style.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('styles/recipes.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('styles/recipedetail.css')}}">
+{% endblock %}
+
+{% block body %}
+ <div class="navbar">
+        <div class="profile_link">
+            <button class="profile_button" ><a href="{{ path('app_user') }}">
+                <img class="profile_button_img" src="{{asset('img/sample.png')}}" alt="User"></a>
+            </button>
+        </div>
+        <div class="filler">
+            <button class="logo2"><a href="{{ path('app_home') }}">
+                <img id="img2" src="{{asset('img/logo.svg')}}" alt="Logo"></a>
+            </button>
+        </div>
+        <div class="logout">
+            <button type="submit" id="logout" class="logout_button"><a href="{{ path('app_login') }}">Logout</a></button>
+        </div>
+    </div>
+    <div class="container">
+
+        <div class="recipe-details">
+            <div class="recipe_details_left">
+                <div class="recipe_details_top">
+                    <div class="recipe_left">
+                        <div class="recipe_img">
+                            <img class="search_img" src="{{asset('img/kotlet.jpg')}}" alt="No picture">
+                        </div>
+                    </div>
+                    <div class="recipe_right">
+                        <div class="recipe_top">
+                            <h1> Przepis 1</h1>
+                        </div>
+                        <div class="recipe_bottom">
+                            <div class="recipe_info">
+                                <div class="recipe_time">
+                                    <h2>Czas przygotowania:</h1>
+                                    <p>20 min.</p>
+                                </div>
+                                <div class="recipe_time">
+                                    <h2>Ilość porcji</h2>
+                                    <p>5</p>
+                                </div>
+                            </div>
+                            <div class="recipe_com">
+                                <div class="recipe_coms">
+                                    <p>rating: 10/10</p>
+                                </div>
+                                <div class="recipe_coms">
+                                    <p>Komentarze (1)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="recipe_details_bottom">   
+                    <h1>Sposób przygotowania:</h1>
+                    <p>text text text text text text</p>                     
+                </div>
+            </div>
+            <div class="recipe_details_right">
+                <h1>Składniki:</h1>
+                <p>text text text text text</p>
+            </div>
+        </div>
+        
+        <div class="comments">
+
+            <div class="comment">
+                <div class="comment_left">
+                    <img class="comment_img" src="{{asset('img/sample.png')}}" alt="User picture">
+                </div>
+                <div class="comment_right">
+                    <div class="comment_top">
+                        <div class="comment_top_side">
+                            <h1>Marek Kowalski</h1>
+                        </div>
+                        <div class="comment_top_side">
+                            <p>11.11.2011</p>
+                        </div>
+                    </div>
+                    <div class="comment_bottom">
+                        <p>fajny</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+       
+        <div class="add_comment">
+            <form action="add_comment" class="add_comment_form" method="post">
+                <div class="add_comment_div">
+                    <textarea name="user_comment" id="user_comment" placeholder="Napisz komentarz" required></textarea>
+                </div>
+                <button class="click-button"><a href="{{ path('app_home') }}">Dodaj komentarz</a></button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

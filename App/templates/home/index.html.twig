@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{{asset('styles/style.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('styles/recipes.css')}}">
+{% endblock %}
+
+{% block javascripts %}
+<script src="{{asset('js/script.js')}}" defer></script>
+<script src="{{asset('js/search.js')}}" defer></script>
+<script src="{{asset('js/redirecting.js')}}" defer></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% endblock %}
+
+{% block body %}
+    <div class="navbar">
+        <div class="profile_link">
+            <button class="profile_button" ><a href="{{ path('app_user') }}">
+                <img class="profile_button_img" src="{{asset('img/sample.png')}}" alt="User"></a>
+            </button>
+        </div>
+        <div class="filler">
+            <button class="logo2"><a href="{{ path('app_home') }}">
+                <img id="img2" src="{{asset('img/logo.svg')}}" alt="Logo"></a>
+            </button>
+        </div>
+        <div class="logout">
+            <button type="submit" id="logout" class="logout_button"><a href="{{ path('app_login') }}">Logout</a></button>
+        </div>
+    </div>
+    <div class="container">
+        
+        <div class="search_bar_warp">
+
+                <div class="search_bar_div">
+                    <input id="search_bar" class="search_bar" type="text" oninput="searchRecipe()" placeholder="Wyszukaj">
+                </div>
+            
+        </div>
+        <div class="recipes">
+                <div class="recipe-container">
+                    <div class="recipe">
+                        <div class="recipe_left">
+                            <div class="recipe_img">
+                                <img class="search_img" src="{{asset('img/kotlet.jpg')}}">
+                            </div>
+                        </div>
+                        <div class="recipe_right">
+                            <div class="recipe_top">
+                            <a href="{{ path('app_recipe') }}">
+                                <h1> Przepis 1 </h1>
+                                </a>
+                            </div>
+                            <div class="recipe_bottom">
+                                <div class="recipe_info">
+                                    <div class="recipe_time">
+                                        <h2>Czas przygotowania:</h1>
+                                        <p>20 min.</p>
+                                    </div>
+                                    <div class="recipe_time">
+                                        <h2>Ilość porcji</h2>
+                                        <p>5</p>
+                                    </div>
+                                </div>
+                                <div class="recipe_com">
+                                    <div class="recipe_coms">
+                                        <p>rating: 10/10</p>
+                                    </div>
+                                    <div class="recipe_coms">
+                                        <p>Komentarze (0)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+        </div>
+        <div class="add_button">
+            <button class="click-button"><a href="{{ path('app_add_recipe') }}">Dodaj przepis</a></button>
+        </div>
+    </div>
+{% endblock %}

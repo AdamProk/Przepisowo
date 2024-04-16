@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{{asset('styles/style.css')}}">
+{% endblock %}
+
+{% block javascripts %}
+<script src="{{asset('js/script.js')}}" defer></script>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+        <div class="logo">
+            <img id="img" src="public/img/logo.svg">
+        </div>
+        <div class="Message">
+            <h1>Rejestracja</h1>
+        </div>
+        <div class="login-container">
+            <form class="signup" action="signup" method="POST">
+                <input name="username" type="text" placeholder="wpisz nazwę użytkownika" required>
+                <input name="email" type="email" placeholder="wpisz adres email" required>
+                <input name="password" type="password" placeholder="wpisz hasło" required>
+                <input name="repeat_password" type="password" placeholder="powtórz hasło" required>
+                <button class ="click-button" type="submit"><a href="{{ path('app_home') }}">Utworz konto</a></button>
+                <div class='messages'>
+                    
+                </div>
+            </form>
+        </div>
+        <div id="move_login">
+            <button class="click-button"><a href="{{ path('app_login') }}">Login</a></button>
+        </div>
+    </div>
+{% endblock %}

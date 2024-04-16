@@ -1,0 +1,48 @@
+.profile_pic{
+    background-color: #39F383;
+    border-radius: 1em;
+    border-color: black;
+    border-style: solid;
+    border-width: 1px;
+    margin-top: 10vh;
+    margin-bottom: 5vh;
+    width: 60vw;
+    height: 40vh;
+    padding: 2.5%;
+}
+.profile_img{
+    width: 100%;
+    height: 90%;
+}
+.profile_button_img{
+    max-width: 100%;
+    max-height: 100%;
+}
+.profile_pic_change{
+    width: 100%;
+    height: 10%;
+}
+.profile_info{
+    background-color: #39F383;
+    border-radius: 1em;
+    border-color: black;
+    border-style: solid;
+    border-width: 1px;
+    padding: 2.5%;
+    width: 60%;
+    height: 40vh;
+}
+.profile_info p{
+    font-size: 2em;
+    margin-bottom: 10%;
+}
+.user_recipes{
+    margin-top: 10vh;
+    width: 65%;
+}
+.recipes{
+    width: 100%;
+}
+.recipe-container{
+    height: 20vh;
+}

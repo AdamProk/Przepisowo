@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{{asset('styles/style.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('styles/recipes.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('styles/addrecipe.css')}}">
+{% endblock %}
+
+{% block javascripts %}
+<script src="{{asset('js/script.js')}}" defer></script>
+{% endblock %}
+
+{% block body %}
+    <div class="navbar">
+        <div class="profile_link">
+            <button class="profile_button" ><a href="{{ path('app_user') }}">
+                <img class="profile_button_img" src="{{asset('img/sample.png')}}" alt="User"></a>
+            </button>
+        </div>
+        <div class="filler">
+            <button class="logo2"><a href="{{ path('app_home') }}">
+                <img id="img2" src="{{asset('img/logo.svg')}}" alt="Logo"></a>
+            </button>
+        </div>
+        <div class="logout">
+            <button type="submit" id="logout" class="logout_button"><a href="{{ path('app_login') }}">Logout</a></button>
+        </div>
+    </div>
+    <div class="container">
+        <div class="add_recipe">
+            <form action="addRecipe" method="POST" ENCTYPE="multipart/form-data">
+                <input type="text" name="recipe_name" placeholder="Nazwa">
+                <textarea name="description" placeholder="Sposób przygotowania"></textarea>
+                <textarea name="ingredients" placeholder="Składniki"></textarea>
+                <input type="number" name="prep_time" placeholder="Czas przygotowania">
+                <input type="number" name="amount" placeholder="Liczba porcji">
+                <input type="file" name="file" >
+                <button type="submit" class="click-button"><a href="{{ path('app_home') }}">Dodaj</a></button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

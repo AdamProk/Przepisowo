@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="logo">
+        <img id="img" src="assets/img/logo.svg">
+    </div>
+    <div class="Message">
+        <h1>Rejestracja</h1>
+    </div>
+    <div class="login-container">
+        <form class="signup" [formGroup]="registerForm">
+            <div class="formElement">
+            <input formControlName="username" type="text" placeholder="wpisz nazwę użytkownika" required></div>
+            <div class="formElement">
+            <input formControlName="email" type="email" placeholder="wpisz adres email" required></div>
+            <div class="formElement">
+            <input formControlName="password" type="password" placeholder="wpisz hasło" required></div>
+            <div class="formElement">
+            <input formControlName="confirmPassword" type="password" placeholder="powtórz hasło" required></div>
+            <button class ="click-button" type="submit" (click)="submitForm()">Utworz konto</button>
+            <div class='messages'>
+                {{data}}
+            </div>
+        </form>
+    </div>
+    <div id="move_login">
+        <button class="click-button"><a routerLink="/login">Login</a></button>
+    </div>
+</div>

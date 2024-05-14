@@ -30,3 +30,5 @@ RUN curl -sS https://get.symfony.com/cli/installer | bash && mv /root/.symfony5/
 
 # Install NVM
 RUN curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+
+RUN composer install

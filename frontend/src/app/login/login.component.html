@@ -1,0 +1,24 @@
+<div class="container">
+    <div class="logo">
+        <img id="img" src="assets/img/logo.svg">
+    </div>
+    
+    
+    <div class="Message">
+        <h1>Logowanie</h1>
+    </div>
+    <div class="login-container">
+        <form class="login" [formGroup]="loginForm">
+            <div class="formElement">
+            <input formControlName="email" type="text" placeholder="wpisz adres email"></div>
+            <div class="formElement">
+            <input formControlName="password" type="password" placeholder="wpisz hasło"></div>
+            <button class="click-button" type="submit" (click)="submitForm()"> Zaloguj </button>
+            <div class='messages'>
+                {{data}}
+            </div>
+        </form>
+    </div>
+    <button class="click-button"><a routerLink="/register">Register </a></button>
+    <div class="fill"></div>
+</div>

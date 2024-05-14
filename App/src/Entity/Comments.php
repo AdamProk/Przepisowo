@@ -29,7 +29,7 @@ class Comments
 
     #[ORM\ManyToOne(inversedBy: 'comment')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Users $comment_user = null;
+    private ?User $comment_user = null;
 
     public function getId(): ?int
     {
@@ -84,12 +84,12 @@ class Comments
         return $this;
     }
 
-    public function getCommentUser(): ?Users
+    public function getCommentUser(): ?User
     {
         return $this->comment_user;
     }
 
-    public function setCommentUser(?Users $comment_user): static
+    public function setCommentUser(?User $comment_user): static
     {
         $this->comment_user = $comment_user;
 

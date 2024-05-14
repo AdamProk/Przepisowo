@@ -48,7 +48,7 @@ class Recipes
 
     #[ORM\ManyToOne(inversedBy: 'recipe')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Users $recipe_user = null;
+    private ?User $recipe_user = null;
 
     /**
      * @var Collection<int, Comments>
@@ -187,12 +187,12 @@ class Recipes
         return $this;
     }
 
-    public function getRecipeUser(): ?Users
+    public function getRecipeUser(): ?User
     {
         return $this->recipe_user;
     }
 
-    public function setRecipeUser(?Users $recipe_user): static
+    public function setRecipeUser(?User $recipe_user): static
     {
         $this->recipe_user = $recipe_user;
 

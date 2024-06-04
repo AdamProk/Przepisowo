@@ -7,8 +7,9 @@ import { catchError } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class LoginService {
-  private loginAPI= 'http://localhost/login';
-  private registerAPI = 'http://localhost/register';
+  private loginAPI= 'http://localhost:8000/api/login';
+  private registerAPI = 'http://localhost:8000/api/register';
+  private meUrl = 'http://localhost:8000/api/me/all';
 
   constructor(private http: HttpClient) { }
 
@@ -37,6 +38,14 @@ export class LoginService {
             return throwError(()=> new Error('Nie udało się dodać użytkowanika.'));
         })
     );
+}
+  getUser(): Observable<any[]> {
+    return this.http.get<any[]>(this.meUrl).pipe(
+      catchError(error => {
+          console.error('Error fetching user info: ', error);
+          return throwError(()=> new Error('Couldnt fetch user info.'));
+      })
+  );
 }
   
 }

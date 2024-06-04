@@ -9,9 +9,11 @@
             <img id="img2" src="assets/img/logo.svg" alt="Logo"></a>
         </button>
     </div>
-    <div class="logout">
-        <button type="submit" id="logout" class="logout_button"><a routerLink="/login">Logout</a></button>
-    </div>
+    @if(!isUserLoggedIn()){
+        <div class="logout">
+            <button type="submit" (click)="logout()" class="logout_button">Logout</button>
+        </div>
+    }
 </div>
 <div class="container">
     <div class="profile_pic">
@@ -24,14 +26,16 @@
     </div>
     <div class="profile_info">
         <h1>Nazwa użytkownika:</h1>
-        <p>Jacek</p>
+        <p>{{profile.username}}</p>
         <h1>Email:</h1>
-        <p>jacek.gmail.com</p>
+        <p>{{profile.email}}</p>
     </div>
     <div class="user_recipes">
         <h1>Przepisy użytkownika:</h1>
         <div class="recipes">
+
                 <div class="recipe-container">
+                    
                     <div class="recipe">
                     <div class="recipe_left">
                         <div class="recipe_img">
@@ -41,18 +45,18 @@
                     <div class="recipe_right">
                         <div class="recipe_top">
                         <a routerLink="/recipe">
-                            <h1> Przepis 1 </h1>
+                            <h1>7</h1>
                             </a>
                         </div>
                         <div class="recipe_bottom">
                             <div class="recipe_info">
                                 <div class="recipe_time">
                                     <h2>Czas przygotowania:</h2>
-                                    <p>20 min.</p>
+                                    <p>0</p>
                                 </div>
                                 <div class="recipe_time">
                                     <h2>Ilość porcji</h2>
-                                    <p>5</p>
+                                    <p>9</p>
                                 </div>
                             </div>
                             <div class="recipe_com">
@@ -65,6 +69,7 @@
                             </div>
                         </div>
                     </div>
+                
                 </div>
         </div>
     </div>

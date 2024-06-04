@@ -4,6 +4,7 @@ import { FormBuilder,
   FormGroup,
   FormControl,
   Validators,
+  AbstractControl,
   ReactiveFormsModule,
 } from '@angular/forms';
 import { LoginService } from '../services/login.service';
@@ -31,20 +32,18 @@ export class RegisterComponent {
   ngOnInit(): void {
     this.registerForm = this.formBuilder.group(
         {
-            username: ['', Validators.required],
-            email: ['', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]],
-            password: [
-            '',
-            [
-                Validators.required,
-                Validators.minLength(3),
-                Validators.maxLength(40),
-            ],
-            ],
-            confirmPassword: ['', Validators.required],
+            username: [''],
+            email: [''],
+            password: [''],
+            confirmPassword: [''],
         },
+        
     );
   } 
+
+  get form(): { [key: string]: AbstractControl } {
+    return this.registerForm.controls;
+}
 
   submitForm(): void {
     this.submitted = true;

@@ -6,13 +6,14 @@ import { UserComponent } from './user/user.component';
 import { RecipeComponent } from './recipe/recipe.component';
 import { AddrecipeComponent } from './addrecipe/addrecipe.component';
 
+import { authGuard, loggedInAuthGuard } from './services/auth.guard';
 
 export const routes: Routes = [
-    {path:'', component: HomeComponent},
-    {path:'login', component:LoginComponent},
-    {path:'register', component:RegisterComponent},
-    {path:'user', component:UserComponent},
-    {path:'recipe', component:RecipeComponent},
-    {path:'addrecipe', component:AddrecipeComponent},
+    {path:'', component: HomeComponent, canActivate: [authGuard]},
+    {path:'login', component:LoginComponent, canActivate: [loggedInAuthGuard] },
+    {path:'register', component:RegisterComponent, canActivate: [loggedInAuthGuard] },
+    {path:'user', component:UserComponent, canActivate: [authGuard]},
+    {path:'recipe/:id', component:RecipeComponent, canActivate: [authGuard]},
+    {path:'addrecipe', component:AddrecipeComponent, canActivate: [authGuard]},
     { path: '**', redirectTo: '' }
 ];

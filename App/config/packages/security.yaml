@@ -49,7 +49,10 @@ security:
         # - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
-        - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api,       roles: PUBLIC_ACCESS }
+        - { path: ^/api/addrecipe, roles: PUBLIC_ACCESS }
+        - { path: ^/api/user, roles: PUBLIC_ACCESS }
+        - { path: ^/api/recipe, roles: PUBLIC_ACCESS }
 
 when@test:
     security:

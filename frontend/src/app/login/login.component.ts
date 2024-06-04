@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { FormBuilder,
+  AbstractControl,
   FormGroup,
   FormControl,
   Validators,
@@ -27,23 +28,20 @@ export class LoginComponent {
   constructor(
       private loginService: LoginService,
       private formBuilder: FormBuilder,
+      private router: Router,
   ) { }
 
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group(
         {
-            email: ['', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]],
-            password: [
-            '',
-            [
-                Validators.required,
-                Validators.minLength(4),
-                Validators.maxLength(40),
-            ],
-            ],
+            email: [''],
+            password: [''],
         }
     );
   }
+  get form(): { [key: string]: AbstractControl } {
+    return this.loginForm.controls;
+}
 
   submitForm(): void {
     this.submitted = true;
@@ -62,8 +60,9 @@ export class LoginComponent {
     
     this.loginService.login(formData).subscribe({
         next: response => {
-            console.log('Zalogowano:', response)
-            this.data = "Zalogowano. Twoje id: " + response.userId;
+            localStorage.setItem('authToken', response.token);
+            // this.userService.notifyUserLoggedIn();
+            this.router.navigate(['/']);
         },
         error: error => {
             console.error('Błąd podczas logowania:', error)

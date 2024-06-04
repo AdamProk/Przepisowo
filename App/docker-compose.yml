@@ -1,16 +1,8 @@
 version: "3"
 
 services:
-  php:
-    container_name: "${CONTAINER_NAME_PREFIX}-php"
-    build: ./docker/php
-    volumes:
-      - ${PATH_TO_SYMFONY_PROJECT}:/var/www/html
-    ports:
-      - "80:80"
-
   db:
-    container_name: "${CONTAINER_NAME_PREFIX}-sql"
+    container_name: "${CONTAINER_NAME_PREFIX}-POSTGRES"
     image: postgres:latest
     environment:
       - POSTGRES_USER=${POSTGRES_USER}

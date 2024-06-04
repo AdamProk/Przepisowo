@@ -9,20 +9,23 @@
             <img id="img2" src="assets/img/logo.svg" alt="Logo"></a>
         </button>
     </div>
-    <div class="logout">
-        <button type="submit" id="logout" class="logout_button"><a routerLink="/login">Logout</a></button>
-    </div>
+    @if(isUserLoggedIn()){
+        <div class="logout">
+            <button type="submit" (click)="logout()" class="logout_button">Logout</button>
+        </div>
+    }
 </div>
 <div class="container">
+    <h1>{{message}}</h1>
     <div class="add_recipe">
-        <form action="addRecipe" method="POST" ENCTYPE="multipart/form-data">
-            <input type="text" name="recipe_name" placeholder="Nazwa">
-            <textarea name="description" placeholder="Sposób przygotowania"></textarea>
-            <textarea name="ingredients" placeholder="Składniki"></textarea>
-            <input type="number" name="prep_time" placeholder="Czas przygotowania">
-            <input type="number" name="amount" placeholder="Liczba porcji">
-            <input type="file" name="file" >
-            <button type="submit" class="click-button"><a routerLink="">Dodaj</a></button>
+        <form [formGroup]="addform" (ngSubmit)="submitForm($event)" ENCTYPE="multipart/form-data">
+            <input type="text" name="recipe_name" placeholder="Nazwa" formControlName="name">
+            <textarea name="description" placeholder="Sposób przygotowania" formControlName="description"></textarea>
+            <textarea name="ingredients" placeholder="Składniki" formControlName="ingredients"></textarea>
+            <input type="number" name="prep_time" placeholder="Czas przygotowania" formControlName="time">
+            <input type="number" name="amount" placeholder="Liczba porcji" formControlName="amount">
+            <input name="recipe_date" type="date" id="recipe_date" placeholder="Post date" formControlName="date" required>
+            <button type="submit" class="click-button">Dodaj</button>
         </form>
     </div>
 </div>

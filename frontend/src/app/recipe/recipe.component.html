@@ -9,9 +9,11 @@
             <img id="img2" src="assets/img/logo.svg" alt="Logo"></a>
         </button>
     </div>
-    <div class="logout">
-        <button type="submit" id="logout" class="logout_button"><a routerLink="/login">Logout</a></button>
-    </div>
+    @if(isUserLoggedIn()){
+        <div class="logout">
+            <button type="submit" (click)="logout()" class="logout_button">Logout</button>
+        </div>
+    }
 </div>
 <div class="container">
 
@@ -25,17 +27,17 @@
                 </div>
                 <div class="recipe_right">
                     <div class="recipe_top">
-                        <h1> Przepis 1</h1>
+                        <h1> {{recipe.name}}</h1>
                     </div>
                     <div class="recipe_bottom">
                         <div class="recipe_info">
                             <div class="recipe_time">
                                 <h2>Czas przygotowania:</h2>
-                                <p>20 min.</p>
+                                <p>{{recipe.time}}</p>
                             </div>
                             <div class="recipe_time">
                                 <h2>Ilość porcji</h2>
-                                <p>5</p>
+                                <p>{{recipe.amount}}</p>
                             </div>
                         </div>
                         <div class="recipe_com">
@@ -51,12 +53,12 @@
             </div>
             <div class="recipe_details_bottom">   
                 <h1>Sposób przygotowania:</h1>
-                <p>text text text text text text</p>                     
+                <p>{{recipe.description}}</p>                     
             </div>
         </div>
         <div class="recipe_details_right">
             <h1>Składniki:</h1>
-            <p>text text text text text</p>
+            <p>{{recipe.ingredients}}</p>
         </div>
     
     </div>

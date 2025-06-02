@@ -23,10 +23,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     /**
-     * @var list<string> The user roles
+     * @var Collection<int, Role>
      */
-    #[ORM\Column]
-    private array $roles = [];
+    #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'users')]
+    private Collection $userRoles;
 
     /**
      * @var string The hashed password
@@ -56,9 +56,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->recipe = new ArrayCollection();
         $this->comment = new ArrayCollection();
+        $this->userRoles = new ArrayCollection();
     }
-
-
 
     public function getId(): ?int
     {
@@ -94,21 +93,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
+        $roles = $this->userRoles->map(fn(Role $role) => 'ROLE_' . strtoupper($role->getName()))->toArray();
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
-    }
-
-    /**
-     * @param list<string> $roles
-     */
-    public function setRoles(array $roles): static
-    {
-        $this->roles = $roles;
-
-        return $this;
     }
 
     /**
@@ -140,12 +129,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getProfilePicture(): ?string
     {
-        return $this->profile_picture;
+        return $this->profile_picture ?? 'sample.png';
     }
 
-    public function setProfilePicture(string $profile_picture): static
+    public function setProfilePicture(?string $profile_picture): static
     {
         $this->profile_picture = $profile_picture;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Role>
+     */
+    public function getUserRoles(): Collection
+    {
+        return $this->userRoles;
+    }
+
+    public function addUserRole(Role $role): static
+    {
+        if (!$this->userRoles->contains($role)) {
+            $this->userRoles->add($role);
+        }
+
+        return $this;
+    }
+
+    public function removeUserRole(Role $role): static
+    {
+        $this->userRoles->removeElement($role);
 
         return $this;
     }
@@ -216,8 +229,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
     }
-
-
 }

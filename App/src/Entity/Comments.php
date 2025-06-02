@@ -17,7 +17,7 @@ class Comments
     #[ORM\Column(length: 255)]
     private ?string $comment = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $comment_date = null;
 
     #[ORM\Column]

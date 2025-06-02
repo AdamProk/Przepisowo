@@ -19,7 +19,7 @@ class Recipes
     #[ORM\Column(length: 255)]
     private ?string $recipe_picture = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $recipe_date = null;
 
     #[ORM\Column]
@@ -28,10 +28,10 @@ class Recipes
     #[ORM\Column(length: 255)]
     private ?string $recipe_name = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $ingredients = null;
 
     #[ORM\Column]
@@ -55,6 +55,9 @@ class Recipes
      */
     #[ORM\OneToMany(targetEntity: Comments::class, mappedBy: 'recipe')]
     private Collection $comments;
+
+    #[ORM\OneToOne(mappedBy: 'recipe', cascade: ['persist', 'remove'])]
+    private ?Nutrients $nutrients = null;
 
     public function __construct()
     {
@@ -226,6 +229,22 @@ class Recipes
             }
         }
 
+        return $this;
+    }
+
+    public function getNutrients(): ?Nutrients
+    {
+        return $this->nutrients;
+    }
+
+    public function setNutrients(Nutrients $nutrients): static
+    {
+        // set the owning side of the relation if necessary
+        if ($nutrients->getRecipe() !== $this) {
+            $nutrients->setRecipe($this);
+        }
+
+        $this->nutrients = $nutrients;
         return $this;
     }
 }

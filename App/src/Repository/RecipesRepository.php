@@ -45,4 +45,15 @@ class RecipesRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findByCuisine(string $cuisine, int $limit = 5): array
+    {
+        return $this->createQueryBuilder('r')
+            ->leftJoin('r.recipe_cuisine', 'c')
+            ->andWhere('c.cuisine = :cuisine')
+            ->setParameter('cuisine', $cuisine)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 }

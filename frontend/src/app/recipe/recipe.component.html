@@ -1,95 +1,253 @@
-<div class="navbar">
-    <div class="profile_link">
-        <button class="profile_button" ><a routerLink="/user">
-            <img class="profile_button_img" src="assets/img/sample.png" alt="User"></a>
-        </button>
+<app-nav></app-nav>
+
+<div class="container">
+    <div class="recipe">
+        <div class="recipe_left">
+            <div class="recipe_img">
+                <img class="search_img" [src]="getRecipeImageUrl()" alt="Recipe image">
+                @if(isRecipeCreator()) {
+                    <div class="image-change-section">
+                        <input 
+                            type="file" 
+                            #fileInput 
+                            style="display: none" 
+                            (change)="onFileSelected($event)"
+                            accept="image/jpeg,image/png,image/gif">
+                        <button class="change-picture-button" (click)="fileInput.click()">
+                            Zmień zdjęcie przepisu
+                        </button>
+                        @if(uploadMessage) {
+                            <div [class]="uploadStatus ? 'message success' : 'message error'">
+                                {{uploadMessage}}
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="recipe_right">
+            <div class="recipe_top">
+                <h1>{{recipe?.recipeName || recipe?.name || 'Untitled Recipe'}}</h1>
+            </div>
+            <div class="recipe_bottom">
+                <div class="recipe_info">
+                    <div class="recipe_stats">
+                        <div class="recipe_stats_row">
+                            <div class="recipe_stat_item">
+                                <p>Czas przygotowania: {{recipe?.prepTime || recipe?.time || '0'}} min</p>
+                            </div>
+                            <div class="recipe_stat_item">
+                                <p>Ilość porcji: {{recipe?.amount || '0'}}</p>
+                            </div>
+                        </div>
+                        <div class="recipe_stats_row">
+                            <div class="recipe_stat_item">
+                                <p>Ocena: {{(recipe?.score || recipe?.rating || 0).toFixed(1)}}/10</p>
+                            </div>
+                            <div class="recipe_stat_item">
+                                <p>Liczba ocen: {{recipe?.comments_count || (recipe?.comments || []).length || 0}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    @if(isUserLoggedIn()){
+                        <div class="recipe-actions">
+                            <button class="add-to-diet-plan" (click)="addToDietPlan()">Dodaj do planera diety</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="filler">
-        <button class="logo2"><a routerLink=" ">
-            <img id="img2" src="assets/img/logo.svg" alt="Logo"></a>
-        </button>
+    <div class="recipe_info_section">
+        <h1>Informacje o przepisie:</h1>
+        <div class="cuisine_info">
+            <h2>Kuchnia:</h2>
+            @if(recipe?.cuisines?.length === 0 || !recipe?.cuisines){
+                <p>Nie określono</p>
+            } @else {
+                <p>{{getCuisineNames()}}</p>
+            }
+        </div>
+        <div class="nutrients_info">
+            <h2>Wartości odżywcze:</h2>
+            @if(!recipe?.nutrients){
+                <p>Nie określono</p>
+            } @else {
+                <div class="nutrients-grid">
+                    @if(recipe?.nutrients?.calories !== undefined){
+                        <div class="nutrient-item">
+                            <span class="nutrient-label">Kalorie:</span>
+                            <span class="nutrient-value">{{recipe?.nutrients?.calories}} kcal</span>
+                        </div>
+                    }
+                    @if(recipe?.nutrients?.proteins !== undefined){
+                        <div class="nutrient-item">
+                            <span class="nutrient-label">Białko:</span>
+                            <span class="nutrient-value">{{recipe?.nutrients?.proteins}} g</span>
+                        </div>
+                    }
+                    @if(recipe?.nutrients?.carbohydrates !== undefined){
+                        <div class="nutrient-item">
+                            <span class="nutrient-label">Węglowodany:</span>
+                            <span class="nutrient-value">{{recipe?.nutrients?.carbohydrates}} g</span>
+                        </div>
+                    }
+                    @if(recipe?.nutrients?.fats !== undefined){
+                        <div class="nutrient-item">
+                            <span class="nutrient-label">Tłuszcze:</span>
+                            <span class="nutrient-value">{{recipe?.nutrients?.fats}} g</span>
+                        </div>
+                    }
+                </div>
+                <div class="nutrients-grid-secondary">
+                    @if(recipe?.nutrients?.vitamins){
+                        <div class="nutrient-item">
+                            <span class="nutrient-label">Witaminy:</span>
+                            <span class="nutrient-value">{{recipe?.nutrients?.vitamins}}</span>
+                        </div>
+                    }
+                    @if(recipe?.nutrients?.minerals){
+                        <div class="nutrient-item">
+                            <span class="nutrient-label">Minerały:</span>
+                            <span class="nutrient-value">{{recipe?.nutrients?.minerals}}</span>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+    <div class="recipe_desc">
+        <h1>Sposób przygotowania:</h1>
+        @if(!recipe?.preparationSteps?.length) {
+            @if(recipe?.description) {
+                <p>{{recipe?.description}}</p>
+            } @else {
+                <p>Brak opisu przygotowania</p>
+            }
+        } @else {
+            <div class="preparation-steps">
+                @for(step of recipe?.preparationSteps; track $index) {
+                    <div class="preparation-step">
+                        @if(isStringStep(step)) {
+                            <p class="step-description">{{step}}</p>
+                        } @else {
+                            <div class="step-header">
+                                <span class="step-number">Krok {{step.order}}</span>
+                                @if(step.time) {
+                                    <div class="step-time">
+                                        <span>{{step.time}} min</span>
+                                        <button class="timer-button" (click)="startTimer(step.time)">
+                                            ⏰ Start
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+                            <p class="step-description">{{step.description}}</p>
+                            @if(step.tip) {
+                                <div class="step-tip">
+                                    <span class="tip-icon">💡</span>
+                                    <p>{{step.tip}}</p>
+                                </div>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <div class="recipe_ing">
+        <h1>Składniki:</h1>
+        <div class="ingredients-list">
+            @if(!recipe?.ingredients?.length) {
+                <p>Brak składników</p>
+            } @else {
+                <div class="servings-control">
+                    <button (click)="adjustServings(-1)" [disabled]="currentServings <= 1">-</button>
+                    <span>{{currentServings}} porcji</span>
+                    <button (click)="adjustServings(1)">+</button>
+                </div>
+                <ul class="ingredients-checklist">
+                    @for(ingredient of recipe?.ingredients; track $index) {
+                        <li>
+                            <label class="ingredient-item">
+                                <input type="checkbox">
+                                @if(isStringIngredient(ingredient)) {
+                                    <span class="ingredient-text">{{ingredient}}</span>
+                                } @else {
+                                    <span class="ingredient-name">{{ingredient.name}}</span>
+                                    <div class="ingredient-amount-container">
+                                        <span class="ingredient-amount">
+                                            {{scaleAmount(ingredient.quantity, currentServings)}} {{ingredient.unit}}
+                                        </span>
+                                        @if(ingredient.optional) {
+                                            <span class="optional-tag">(opcjonalnie)</span>
+                                        }
+                                    </div>
+                                }
+                            </label>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+    <div class="comments">
+        <h1>Oceny:</h1>
+        <div class="comments-list">
+            @if((recipe?.comments || []).length === 0){
+                <p>No comments yet</p>
+            } @else {
+                @for(comment of recipe?.comments || []; track comment.id){
+                    <div class="comment">
+                        <div class="comment_left">
+                            <img [src]="getCommentUserProfilePicture(comment)" alt="User profile" class="comment_profile_pic">
+                            <p>{{comment?.user?.username || 'Unknown User'}}</p>
+                        </div>
+                        <div class="comment_right">
+                            <div class="comment_top">
+                                <p>{{comment?.content}}</p>
+                            </div>
+                            <div class="comment_bottom">
+                                <div class="comment_rating">
+                                    <p>Rating: {{comment?.rating || '0'}}/10</p>
+                                </div>
+                                <div class="comment_date">
+                                    <p>{{comment?.date | date:'dd/MM/yyyy HH:mm'}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
     </div>
     @if(isUserLoggedIn()){
-        <div class="logout">
-            <button type="submit" (click)="logout()" class="logout_button">Logout</button>
+        <div class="add_comment">
+            <h1>Oceń przepis:</h1>
+            <form (ngSubmit)="onSubmit()" #commentForm="ngForm">
+                <textarea 
+                    [(ngModel)]="newComment.content" 
+                    name="content" 
+                    #content="ngModel"
+                    required></textarea>
+                <div class="rating_select">
+                    <label for="rating">Ocena (0-10):</label>
+                    <input 
+                        type="number" 
+                        [(ngModel)]="newComment.rating" 
+                        name="rating" 
+                        #rating="ngModel"
+                        min="0" 
+                        max="10" 
+                        required>
+                </div>
+                <button type="submit" [disabled]="!commentForm.valid">Oceń przepis</button>
+            </form>
+        </div>
+    } @else {
+        <div class="login-prompt">
+            <p>Zaloguj się, aby dodawać komentarze i korzystać z planera diety.</p>
+            <a routerLink="/login">Zaloguj się / Zarejestruj się</a>
         </div>
     }
 </div>
-<div class="container">
-
-    <div class="recipe-details">
-        <div class="recipe_details_left">
-            <div class="recipe_details_top">
-                <div class="recipe_left">
-                    <div class="recipe_img">
-                        <img class="search_img" src="assets/img/kotlet.jpg" alt="No picture">
-                    </div>
-                </div>
-                <div class="recipe_right">
-                    <div class="recipe_top">
-                        <h1> {{recipe.name}}</h1>
-                    </div>
-                    <div class="recipe_bottom">
-                        <div class="recipe_info">
-                            <div class="recipe_time">
-                                <h2>Czas przygotowania:</h2>
-                                <p>{{recipe.time}}</p>
-                            </div>
-                            <div class="recipe_time">
-                                <h2>Ilość porcji</h2>
-                                <p>{{recipe.amount}}</p>
-                            </div>
-                        </div>
-                        <div class="recipe_com">
-                            <div class="recipe_coms">
-                                <p>rating: 10/10</p>
-                            </div>
-                            <div class="recipe_coms">
-                                <p>Komentarze (1)</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="recipe_details_bottom">   
-                <h1>Sposób przygotowania:</h1>
-                <p>{{recipe.description}}</p>                     
-            </div>
-        </div>
-        <div class="recipe_details_right">
-            <h1>Składniki:</h1>
-            <p>{{recipe.ingredients}}</p>
-        </div>
-    
-    </div>
-    <div class="comments">
-
-        <div class="comment">
-            <div class="comment_left">
-                <img class="comment_img" src="assets/img/sample.png" alt="User picture">
-            </div>
-            <div class="comment_right">
-                <div class="comment_top">
-                    <div class="comment_top_side">
-                        <h1>Marek Kowalski</h1>
-                    </div>
-                    <div class="comment_top_side">
-                        <p>11.11.2011</p>
-                    </div>
-                </div>
-                <div class="comment_bottom">
-                    <p>fajny</p>
-                </div>
-            </div>
-        </div>
-
-    </div>
-   
-    <div class="add_comment">
-        <form action="add_comment" class="add_comment_form" method="post">
-            <div class="add_comment_div">
-                <textarea name="user_comment" id="user_comment" placeholder="Napisz komentarz" required></textarea>
-            </div>
-            <button class="click-button"><a routerLink=" ">Dodaj komentarz</a></button>
-        </form>
-    </div>

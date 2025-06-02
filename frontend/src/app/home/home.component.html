@@ -1,73 +1,58 @@
-<div class="navbar">
-    <div class="profile_link">
-        <button class="profile_button" ><a routerLink="/user">
-            <img class="profile_button_img" src="assets/img/sample.png" alt="User"></a>
-        </button>
-    </div>
-    <div class="filler">
-        <button class="logo2"><a routerLink=" ">
-            <img id="img2" src="assets/img/logo.svg" alt="Logo"></a>
-        </button>
-    </div>
-    @if(isUserLoggedIn()){
-    <div class="logout">
-        <button type="submit" (click)="logout()" class="logout_button">Logout</button>
-    </div>
-}
-</div>
-<div class="container">
-    
-    <div class="search_bar_warp">
+<app-nav></app-nav>
 
-            <div class="search_bar_div">
-                <input id="search_bar" class="search_bar" type="text" oninput="searchRecipe()" placeholder="Wyszukaj">
-            </div>
-            
-        
-    </div>
-    @if(recipes.lenght == 0 ){
-        <h1>niue ma</h1>
-    }
+<div class="container">
+    <!-- Recipe Recommendations Section -->
+    <app-recipe-recommendations></app-recipe-recommendations>
+
+    <!-- Search and Filter Section -->
+    <app-recipe-search (searchChange)="handleSearchChange($event)"></app-recipe-search>
+
     <div class="recipes">
-            @for(recipe of recipes; track recipe){
-            <div class="recipe-container" (click) ="goToRecipePage(recipe.id)">
+        @for(recipe of recipes || []; track recipe.id){
+            <div class="recipe-container" (click)="goToRecipePage(recipe.id)">
                 <div class="recipe">
                     <div class="recipe_left">
                         <div class="recipe_img">
-                            <img class="search_img" src="assets/img/kotlet.jpg">
+                            <img class="search_img" [src]="getRecipeImageUrl(recipe)" alt="Recipe image">
                         </div>
                     </div>
                     <div class="recipe_right">
                         <div class="recipe_top">
-                        <a routerLink="/recipe">
-                            <h1> {{recipe.name}} </h1>
+                            <a routerLink="/recipe">
+                                <h1>{{recipe.recipeName || recipe.name || 'Untitled Recipe'}}</h1>
                             </a>
                         </div>
                         <div class="recipe_bottom">
                             <div class="recipe_info">
-                                <div class="recipe_time">
-                                    <h2>Czas przygotowania:</h2>
-                                    <p>{{recipe.time}}</p>
+                                <div class="recipe_stats">
+                                    <div class="recipe_stat_item">
+                                        <p>Czas przygotowania: {{recipe.prepTime || recipe.time || 0}} min</p>
+                                    </div>
+                                    <div class="recipe_stat_item">
+                                        <p>Ilość porcji: {{recipe.amount || 0}}</p>
+                                    </div>
                                 </div>
-                                <div class="recipe_time">
-                                    <h2>Ilość porcji</h2>
-                                    <p>{{recipe.amount}}</p>
-                                </div>
-                            </div>
-                            <div class="recipe_com">
-                                <div class="recipe_coms">
-                                    <p>rating: 10/10</p>
-                                </div>
-                                <div class="recipe_coms">
-                                    <p>Komentarze (0)</p>
+                                <div class="recipe_stats">
+                                    <div class="recipe_stat_item">
+                                        <p>Ocena: {{(recipe.score || recipe.rating || 0).toFixed(1)}}/10</p>
+                                    </div>
+                                    <div class="recipe_stat_item">
+                                        <p>Liczba ocen: {{recipe.comments_count || 0}}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            }
+        }
+        @if(!recipes || recipes.length === 0){
+            <h1>Nie znaleziono przepisów</h1>
+        }
     </div>
-    <div class="add_button">
-        <button class="click-button"><a routerLink="/addrecipe">Dodaj przepis</a></button>
-    </div>
+    @if(isUserLoggedIn()){
+        <div class="add_button">
+            <button class="click-button"><a routerLink="/addrecipe">Dodaj przepis</a></button>
+        </div>
+    }
+</div>

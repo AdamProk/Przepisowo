@@ -1,78 +1,90 @@
-<div class="navbar">
-    <div class="profile_link">
-        <button class="profile_button" ><a routerLink="/user">
-            <img class="profile_button_img" src="assets/img/sample.png" alt="User"></a>
-        </button>
-    </div>
-    <div class="filler">
-        <button class="logo2"><a routerLink="/">
-            <img id="img2" src="assets/img/logo.svg" alt="Logo"></a>
-        </button>
-    </div>
-    @if(!isUserLoggedIn()){
-        <div class="logout">
-            <button type="submit" (click)="logout()" class="logout_button">Logout</button>
-        </div>
-    }
-</div>
-<div class="container">
-    <div class="profile_pic">
-        <div class="profile_img">
-            <img class="profile_button_img" src="assets/img/sample.png" alt="Profile picture" >
-        </div>
-        <div class="profile_pic_change">
+<app-nav></app-nav>
 
+<div class="main-container">
+    <div class="profile-section">
+        <!-- Profile Image -->
+        <div class="profile-image-container">
+            <img [src]="getProfileImageUrl()" alt="Profile picture" class="profile-image">
+        </div>
+        
+        <!-- Profile Picture Change Section -->
+        <div class="profile-change-section">
+            <input 
+                type="file" 
+                #fileInput 
+                style="display: none" 
+                (change)="onFileSelected($event)"
+                accept="image/jpeg,image/png,image/gif">
+            <button class="change-picture-button" (click)="fileInput.click()">
+                Change Profile Picture
+            </button>
+            @if(uploadMessage) {
+                <div [class]="uploadStatus ? 'message success' : 'message error'">
+                    {{uploadMessage}}
+                </div>
+            }
+        </div>
+
+        <!-- Profile Info -->
+        <div class="profile-info">
+            <h1>Nazwa użytkownika:</h1>
+            <p>{{profile?.username || 'Loading...'}}</p>
+            <h1>Email:</h1>
+            <p>{{profile?.email || 'Loading...'}}</p>
         </div>
     </div>
-    <div class="profile_info">
-        <h1>Nazwa użytkownika:</h1>
-        <p>{{profile.username}}</p>
-        <h1>Email:</h1>
-        <p>{{profile.email}}</p>
-    </div>
+
+    <!-- User Recipes Section -->
     <div class="user_recipes">
         <h1>Przepisy użytkownika:</h1>
-        <div class="recipes">
-
-                <div class="recipe-container">
-                    
-                    <div class="recipe">
-                    <div class="recipe_left">
-                        <div class="recipe_img">
-                            <img class="search_img" src="assets/img/kotlet.jpg" alt="No picture">
-                        </div>
-                    </div>
-                    <div class="recipe_right">
-                        <div class="recipe_top">
-                        <a routerLink="/recipe">
-                            <h1>7</h1>
-                            </a>
-                        </div>
-                        <div class="recipe_bottom">
-                            <div class="recipe_info">
-                                <div class="recipe_time">
-                                    <h2>Czas przygotowania:</h2>
-                                    <p>0</p>
+        @if(profile){
+            <div class="recipes">
+                @if(profile.recipes && profile.recipes.length > 0){
+                    @for(recipe of profile.recipes; track recipe.id){
+                        <div class="recipe-container" (click)="goToRecipePage(recipe.id)">
+                            <div class="recipe">
+                                <div class="recipe_left">
+                                    <div class="recipe_img">
+                                        <img class="search_img" [src]="getRecipeImageUrl(recipe)" alt="Recipe image">
+                                    </div>
                                 </div>
-                                <div class="recipe_time">
-                                    <h2>Ilość porcji</h2>
-                                    <p>9</p>
+                                <div class="recipe_right">
+                                    <div class="recipe_top">
+                                        <h1>{{recipe.name || recipe.recipeName || 'Untitled Recipe'}}</h1>
+                                    </div>
+                                    <div class="recipe_bottom">
+                                        <div class="recipe_info">
+                                            <div class="recipe_stats">
+                                                <div class="recipe_stat_item">
+                                                    <p>Czas przygotowania: {{recipe.time || recipe.prepTime || 0}} min</p>
+                                                </div>
+                                                <div class="recipe_stat_item">
+                                                    <p>Ilość porcji: {{recipe.amount || 0}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="recipe_stats">
+                                                <div class="recipe_stat_item">
+                                                    <p>Ocena: {{(recipe.rating || recipe.score || 0).toFixed(1)}}/10</p>
+                                                </div>
+                                                <div class="recipe_stat_item">
+                                                    <p>Liczba ocen: {{recipe.comments_count || 0}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="recipe_com">
-                                <div class="recipe_coms">
-                                    <p>rating: 10/10</p>
-                                </div>
-                                <div class="recipe_coms">
-                                    <p>Komentarze (0)</p>
-                                </div>
-                            </div>
                         </div>
-                    </div>
-                
-                </div>
-        </div>
+                    }
+                } @else {
+                    <p>No recipes found.</p>
+                }
+            </div>
+        } @else {
+            <p>Loading profile...</p>
+        }
     </div>
+</div>
             
 
               

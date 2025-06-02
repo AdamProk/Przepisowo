@@ -1,31 +1,128 @@
-<div class="navbar">
-    <div class="profile_link">
-        <button class="profile_button" ><a routerLink="/user">
-            <img class="profile_button_img" src="assets/img/sample.png" alt="User"></a>
-        </button>
-    </div>
-    <div class="filler">
-        <button class="logo2"><a routerLink="">
-            <img id="img2" src="assets/img/logo.svg" alt="Logo"></a>
-        </button>
-    </div>
-    @if(isUserLoggedIn()){
-        <div class="logout">
-            <button type="submit" (click)="logout()" class="logout_button">Logout</button>
-        </div>
-    }
-</div>
+<app-nav></app-nav>
+
 <div class="container">
     <h1>{{message}}</h1>
     <div class="add_recipe">
-        <form [formGroup]="addform" (ngSubmit)="submitForm($event)" ENCTYPE="multipart/form-data">
+        <form [formGroup]="addform" (ngSubmit)="submitForm($event)">
             <input type="text" name="recipe_name" placeholder="Nazwa" formControlName="name">
-            <textarea name="description" placeholder="Sposób przygotowania" formControlName="description"></textarea>
-            <textarea name="ingredients" placeholder="Składniki" formControlName="ingredients"></textarea>
-            <input type="number" name="prep_time" placeholder="Czas przygotowania" formControlName="time">
+            
+            <div class="image-upload">
+                <label>Zdjęcie przepisu:</label>
+                <input 
+                    type="file" 
+                    #fileInput 
+                    (change)="onFileSelected($event)"
+                    accept="image/jpeg,image/png,image/gif">
+                @if(imagePreview) {
+                    <div class="image-preview">
+                        <img [src]="imagePreview" alt="Recipe preview">
+                    </div>
+                }
+            </div>
+
+            <!-- Ingredients Section -->
+            <div class="ingredients-section">
+                <h3>Składniki:</h3>
+                <div formArrayName="ingredients">
+                    @for(ingredient of ingredients.controls; track $index) {
+                        <div [formGroupName]="$index" class="ingredient-row">
+                            <div class="ingredient-name-container">
+                                <input 
+                                    type="text" 
+                                    formControlName="name"
+                                    placeholder="Nazwa składnika"
+                                    autocomplete="off">
+                            </div>
+                            <input 
+                                type="number" 
+                                formControlName="quantity"
+                                placeholder="Ilość"
+                                min="0"
+                                step="0.1">
+                            <select formControlName="unit">
+                                @for(unit of availableUnits; track unit) {
+                                    <option [value]="unit.value">{{unit.label}}</option>
+                                }
+                            </select>
+                            <label class="optional-checkbox">
+                                <input type="checkbox" formControlName="optional">
+                                Opcjonalny
+                            </label>
+                            <button type="button" class="remove-btn" (click)="removeIngredient($index)">
+                                Usuń
+                            </button>
+                        </div>
+                    }
+                </div>
+                <button type="button" class="add-btn" (click)="addIngredient()">
+                    + Dodaj składnik
+                </button>
+            </div>
+
+            <!-- Preparation Steps Section -->
+            <div class="preparation-section">
+                <h3>Sposób przygotowania:</h3>
+                <div formArrayName="preparationSteps">
+                    @for(step of preparationSteps.controls; track $index) {
+                        <div [formGroupName]="$index" class="step-row">
+                            <div class="step-header">
+                                <span class="step-number">Krok {{$index + 1}}</span>
+                                <div class="step-controls">
+                                    <button type="button" (click)="moveStepUp($index)" [disabled]="$index === 0">↑</button>
+                                    <button type="button" (click)="moveStepDown($index)" [disabled]="$index === preparationSteps.length - 1">↓</button>
+                                    <button type="button" class="remove-btn" (click)="removePreparationStep($index)">
+                                        Usuń
+                                    </button>
+                                </div>
+                            </div>
+                            <textarea 
+                                formControlName="description"
+                                placeholder="Opis kroku"
+                                rows="3"></textarea>
+                            <div class="step-details">
+                                <input 
+                                    type="number" 
+                                    formControlName="time"
+                                    placeholder="Czas (min)"
+                                    min="0">
+                                <input 
+                                    type="text" 
+                                    formControlName="tip"
+                                    placeholder="Wskazówka (opcjonalnie)">
+                            </div>
+                        </div>
+                    }
+                </div>
+                <button type="button" class="add-btn" (click)="addPreparationStep()">
+                    + Dodaj krok
+                </button>
+            </div>
+
+            <input type="number" name="prep_time" placeholder="Całkowity czas przygotowania (min)" formControlName="time">
             <input type="number" name="amount" placeholder="Liczba porcji" formControlName="amount">
-            <input name="recipe_date" type="date" id="recipe_date" placeholder="Post date" formControlName="date" required>
-            <button type="submit" class="click-button">Dodaj</button>
+            
+            <div class="cuisine-selection">
+                <label>Wybierz kuchnie:</label>
+                <select multiple formControlName="cuisines">
+                    @for(cuisine of cuisines; track cuisine.id) {
+                        <option [value]="cuisine.id">{{cuisine.cuisine}}</option>
+                    }
+                </select>
+            </div>
+
+            <div class="nutrients-section">
+                <h3>Wartości odżywcze:</h3>
+                <div class="number-inputs">
+                    <input type="number" name="calories" placeholder="Kalorie (wymagane)" formControlName="calories">
+                    <input type="number" step="0.1" name="proteins" placeholder="Białko (g)" formControlName="proteins">
+                    <input type="number" step="0.1" name="carbohydrates" placeholder="Węglowodany (g)" formControlName="carbohydrates">
+                    <input type="number" step="0.1" name="fats" placeholder="Tłuszcze (g)" formControlName="fats">
+                </div>
+                <input type="text" name="vitamins" placeholder="Witaminy (np. A, B12, C)" formControlName="vitamins">
+                <input type="text" name="minerals" placeholder="Minerały (np. Żelazo, Wapń)" formControlName="minerals">
+            </div>
+
+            <button type="submit">Dodaj przepis</button>
         </form>
     </div>
 </div>

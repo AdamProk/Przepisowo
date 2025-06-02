@@ -6,3 +6,32 @@ controllers:
     
 api_login_check:
     path: /api/login_check
+
+# Configure uploads directory access
+uploads_access:
+    path: /api/uploads/{type}/{filename}
+    controller: App\Controller\FileController::serveFile
+    defaults:
+        type: ''
+        filename: ''
+    requirements:
+        type: 'recipe_images|profile_pictures'
+        filename: '.+'
+
+recipe_images:
+    path: /api/uploads/recipe_images/{filename}
+    controller: App\Controller\FileController::serveFile
+    defaults:
+        type: 'recipe_images'
+        filename: ''
+    requirements:
+        filename: '.+'
+
+profile_pictures:
+    path: /api/uploads/profile_pictures/{filename}
+    controller: App\Controller\FileController::serveFile
+    defaults:
+        type: 'profile_pictures'
+        filename: ''
+    requirements:
+        filename: '.+'

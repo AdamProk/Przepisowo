@@ -1,6 +1,8 @@
 <div class="container">
     <div class="logo">
-        <img id="img" src="assets/img/logo.svg">
+        <a routerLink="/">
+            <img src="http://localhost:8000/img/logo.svg" alt="Logo">
+        </a>
     </div>
     
     
@@ -8,17 +10,19 @@
         <h1>Logowanie</h1>
     </div>
     <div class="login-container">
-        <form class="login" [formGroup]="loginForm">
-            <div class="formElement">
-            <input formControlName="email" type="text" placeholder="wpisz adres email"></div>
-            <div class="formElement">
-            <input formControlName="password" type="password" placeholder="wpisz hasło"></div>
-            <button class="click-button" type="submit" (click)="submitForm()"> Zaloguj </button> 
-            <div class='messages'>
-                
+        <form [formGroup]="loginForm" (ngSubmit)="submitForm($event)">
+            <div class="messages" [class.error]="message">
+                {{message}}
+            </div>
+            <div class="input-column">
+                <input type="text" name="email" placeholder="email@email.com" formControlName="email">
+                <input type="password" name="password" placeholder="password" formControlName="password">
+            </div>
+            <div class="login-button">
+                <button class="click-button" type="submit" [disabled]="!loginForm.valid">Zaloguj</button>
             </div>
         </form>
     </div>
-    <button class="click-button"><a routerLink="/register">Register </a></button>
+    <button class="click-button"><a routerLink="/register">Register</a></button>
     <div class="fill"></div>
 </div>

@@ -1,74 +1,58 @@
 import { Component } from '@angular/core';
-import { RouterLink, Router } from '@angular/router';
-import { FormBuilder,
-  AbstractControl,
-  FormGroup,
-  FormControl,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { LoginService } from '../services/login.service';
 
+interface LoginResponse {
+  token: string;
+  error?: {
+    message: string;
+  };
+}
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  loginForm: FormGroup = new FormGroup({
-    email: new FormControl(''),
-    password: new FormControl(''),
-  });
-  submitted = false;
-  data: string = "";
+  loginForm: FormGroup;
+  message: string = '';
 
   constructor(
-      private loginService: LoginService,
-      private formBuilder: FormBuilder,
-      private router: Router,
-  ) { }
-
-  ngOnInit(): void {
-    this.loginForm = this.formBuilder.group(
-        {
-            email: [''],
-            password: [''],
-        }
-    );
-  }
-  get form(): { [key: string]: AbstractControl } {
-    return this.loginForm.controls;
-}
-
-  submitForm(): void {
-    this.submitted = true;
-
-    if (this.loginForm.invalid) {
-        return;
-    }
-
-    const formData = {
-        email: this.loginForm.value.email,
-        password: this.loginForm.value.password,
-    }
-
-    console.log(JSON.stringify(this.loginForm.value, null, 2));
-    console.log((formData));
-    
-    this.loginService.login(formData).subscribe({
-        next: response => {
-            localStorage.setItem('authToken', response.token);
-            // this.userService.notifyUserLoggedIn();
-            this.router.navigate(['/']);
-        },
-        error: error => {
-            console.error('Błąd podczas logowania:', error)
-            this.data = error.message;
-        }
+    private formBuilder: FormBuilder,
+    private loginService: LoginService,
+    private router: Router
+  ) {
+    this.loginForm = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required]
     });
+  }
 
+  submitForm(event: Event) {
+    event.preventDefault();
+    if (this.loginForm.valid) {
+      this.message = '';
+      this.loginService.login(this.loginForm.value).subscribe({
+        next: (response: LoginResponse) => {
+          if (response.token) {
+            this.message = 'Login successful!';
+            this.router.navigate(['/']);
+          } else {
+            this.message = 'Login failed: Invalid response from server';
+          }
+        },
+        error: (error) => {
+          console.error('Login error:', error);
+          this.message = error.error?.message || 'Login failed. Please check your credentials.';
+        }
+      });
+    } else {
+      this.message = 'Please fill in all required fields correctly.';
+    }
   }
 }

@@ -1,0 +1,97 @@
+<app-nav></app-nav>
+
+<div class="container">
+    <div class="filters">
+        <div class="date-filter">
+            <label>Data:</label>
+            <input type="date" [(ngModel)]="selectedDate" (change)="onDateChange()">
+        </div>
+        <div class="meal-type-filter">
+            <label>Typ posiłku:</label>
+            <select [(ngModel)]="selectedMealType">
+                @for(type of mealTypes; track type.value) {
+                    <option [value]="type.value">{{type.label}}</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="nutritional-overview" *ngIf="nutritionalOverview">
+        <h2>Podsumowanie wartości odżywczych</h2>
+        <div class="overview-grid">
+            <div class="overview-item">
+                <h3>Suma</h3>
+                <p>Kalorie: {{nutritionalOverview.total_calories}} kcal</p>
+                <p>Białko: {{nutritionalOverview.total_proteins}} g</p>
+                <p>Węglowodany: {{nutritionalOverview.total_carbohydrates}} g</p>
+                <p>Tłuszcze: {{nutritionalOverview.total_fats}} g</p>
+            </div>
+            <div class="overview-item">
+                <h3>Statystyki</h3>
+                <p>Liczba posiłków: {{nutritionalOverview.meals_count}}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="meals-grid">
+        @for(meal of getFilteredMeals(); track meal.id) {
+            <div class="meal-card">
+                <div class="meal-image">
+                    <img [src]="getRecipeImageUrl(meal)" [alt]="meal.recipe.name">
+                </div>
+                <div class="meal-info">
+                    <div class="meal-header">
+                        <h3>{{meal.recipe.name}}</h3>
+                        <div class="meal-meta">
+                            <p><strong>Data:</strong> {{meal.scheduledDate | date:'dd/MM/yyyy HH:mm'}}</p>
+                            <p><strong>Typ:</strong> {{getMealTypeLabel(meal.mealType)}}</p>
+                            <p><strong>Ilość porcji:</strong> {{meal.portions}}</p>
+                        </div>
+                    </div>
+                    <div class="nutrients-grid">
+                        <div class="nutrients-row">
+                            <div class="nutrient-item">
+                                <span>Kalorie:</span>
+                                <span>{{(meal.recipe.nutrients?.calories ?? 0) * meal.portions}} kcal</span>
+                            </div>
+                            <div class="nutrient-item">
+                                <span>Białko:</span>
+                                <span>{{(meal.recipe.nutrients?.proteins ?? 0) * meal.portions}} g</span>
+                            </div>
+                        </div>
+                        <div class="nutrients-row">
+                            <div class="nutrient-item">
+                                <span>Węglowodany:</span>
+                                <span>{{(meal.recipe.nutrients?.carbohydrates ?? 0) * meal.portions}} g</span>
+                            </div>
+                            <div class="nutrient-item">
+                                <span>Tłuszcze:</span>
+                                <span>{{(meal.recipe.nutrients?.fats ?? 0) * meal.portions}} g</span>
+                            </div>
+                        </div>
+                        <div class="nutrients-row">
+                            <div class="nutrient-item">
+                                <span>Witaminy:</span>
+                                <span>{{meal.recipe.nutrients?.vitamins || 'Brak danych'}}</span>
+                            </div>
+                            <div class="nutrient-item">
+                                <span>Minerały:</span>
+                                <span>{{meal.recipe.nutrients?.minerals || 'Brak danych'}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    @if(meal.notes) {
+                        <p class="meal-notes"><strong>Notatki:</strong> {{meal.notes}}</p>
+                    }
+                    <div class="meal-actions">
+                        <button class="show-recipe-btn" [routerLink]="['/recipe', meal.recipe.id]">Pokaż przepis</button>
+                        <button class="delete-btn" (click)="deleteMeal(meal.id)">Usuń z planera</button>
+                    </div>
+                </div>
+            </div>
+        }
+        @if(getFilteredMeals().length === 0) {
+            <p class="no-meals">Brak zaplanowanych posiłków w wybranym okresie.</p>
+        }
+    </div>
+</div> 

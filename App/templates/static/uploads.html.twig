@@ -1,0 +1,7 @@
+{% set file_path = '/uploads/' ~ type ~ '/' ~ filename %}
+{% if file_exists(file_path) %}
+    {{ include_file(file_path) }}
+{% else %}
+    {% set default_image = '/assets/img/sample.png' %}
+    {{ include_file(default_image) }}
+{% endif %} 

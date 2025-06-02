@@ -25,34 +25,6 @@ class LoginController extends AbstractController
         $this->security = $security;
     }
 
-    #[Route('/api/login', name: 'app_login' , methods: ['POST'])]
-    public function login(Request $request, JWTTokenManagerInterface $jwtManager): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-        $email = $data['email'];
-        $password = $data['password'];
-
-        $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => $email]);
-
-        if (!$user || !password_verify($password, $user->getPassword())) {
-            return $this->json([
-                'message' => 'Zły email lub hasło',
-            ], Response::HTTP_UNAUTHORIZED);
-        }
-        
-        $token = $jwtManager->create($user);
-
-        $responseData = [
-           'message' => 'Zalogowano',
-           'userId' => $user->getId(),
-           'token' => $token,
-        ];
-        $response = new JsonResponse($responseData, JsonResponse::HTTP_CREATED);
-    
-        return $response;
-    }
-
     #[Route('/api/register', name: 'app_register' , methods: ['POST'])]
     public function register(Request $request, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
@@ -83,33 +55,10 @@ class LoginController extends AbstractController
         return new JsonResponse($responseData, JsonResponse::HTTP_CREATED);
     }
 
-    #[Route('api/me', name: 'api_me', methods: ['GET'])]
-    public function getCurrentUser(): JsonResponse
-    {
-        $user = $this->entityManager->getRepository(User::class)->find(1);
-
-        if (!$user instanceof User) {
-            return $this->json([
-                'message' => 'User not found',
-            ], Response::HTTP_NOT_FOUND);
-        }
-
-        $isAdmin = \in_array('ROLE_ADMIN', $user->getRoles(), true);
-
-        $responseData = [
-            'id' => $user->getId(),
-            'email' => $user->getEmail(),
-            'adminPrivileges' => $isAdmin,
-        ];
-        
-        return new JsonResponse($responseData, JsonResponse::HTTP_OK);
-    }
-
     #[Route('api/me/all', name: 'api_me_all', methods: ['GET'])]
     public function getProfileInfo(): JsonResponse
     {
-        //$user = $this->security->getUser();
-        $user = $this->entityManager->getRepository(User::class)->find(1);
+        $user = $this->security->getUser();
 
         if (!$user instanceof User) {
             return $this->json([

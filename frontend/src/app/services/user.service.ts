@@ -1,61 +1,56 @@
 import { Injectable } from '@angular/core';
-import { Subject, BehaviorSubject, Observable, throwError } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { User } from '../models/user.model';
+import { LoginService } from './login.service';
+import { AuthTokenService } from './auth-token.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private api = 'http://localhost:8000/api/me';
-  private currUserSubject = new BehaviorSubject<any>(null);
-  public currUser$ = this.currUserSubject.asObservable();
+  private apiUrl = 'http://localhost:8000/api';
 
-  private userLoggedInSource = new Subject<void>();
-  userLoggedIn$ = this.userLoggedInSource.asObservable();
+  constructor(
+    private http: HttpClient,
+    private loginService: LoginService,
+    private authTokenService: AuthTokenService
+  ) {}
 
-  constructor(private http: HttpClient) {
-    this.loadUser();
-    this.userLoggedIn$.subscribe(() => {
-        this.loadUser();
-    });
+  getCurrentUser(): Observable<User> {
+    return this.loginService.getCurrentUser();
   }
 
-  getCurrentUser(): Observable<any> {
-    return this.http.get<any>(`${this.api}`).pipe(
-        catchError(error => {
-            console.error('Error fetching JSON data:', error);
-            return throwError(() => new Error('Something went wrong; please try again later.'));
-        })
+  getCurrentUserSync(): User | null {
+    return this.loginService.getCurrentUserSync();
+  }
+
+  private getHeaders(): HttpHeaders {
+    let headers = new HttpHeaders();
+    const token = this.authTokenService.getToken();
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    return headers;
+  }
+
+  updateProfilePicture(formData: FormData): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.post(`${this.apiUrl}/profile/picture`, formData, { headers }).pipe(
+      tap(() => this.loginService.loadCurrentUser())
     );
   }
 
-  private loadUser(): void {
-    if (typeof localStorage !== 'undefined') {
-        if (localStorage.getItem('authToken')) {
-            this.getCurrentUser().subscribe({
-                next: user => this.currUserSubject.next(user),
-                error: error => console.error('Error fetching user:', error)
-            });
-        }
-    }
+  getProfileImageUrl(profilePicture?: string): string {
+    return this.loginService.getProfileImageUrl(profilePicture);
   }
 
-  public getCurrentUserSync(): any {
-    return this.currUserSubject.value;
+  isUserLoggedIn(): boolean {
+    return this.loginService.isUserLoggedIn();
   }
 
-  public isUserLoggedIn(): boolean {
-      return !!this.currUserSubject.value;
+  isUserAdmin(): boolean {
+    return this.loginService.isUserAdmin();
   }
-
-  public isUserAdmin(): boolean {
-      const user = this.currUserSubject.value;
-      return user ? user.adminPrivileges : false;
-  }
-
-  notifyUserLoggedIn() {
-      this.userLoggedInSource.next();
-  }
-
 } 

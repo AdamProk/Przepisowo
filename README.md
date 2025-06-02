@@ -1,1 +1,1 @@
-# ztpai
+# Przepisowo web app

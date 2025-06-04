@@ -1,12 +1,12 @@
 # Przepisowo web app
 ***
 
-##Runing the project 
+## Runing the project 
 ***
 To properly navigate directories, make sure you are in the root of the project.
 ***
 
-##Database and Synfony
+## Database and Synfony
 ***
 cd App
 
@@ -21,7 +21,7 @@ php bin/console lexik:jwt:generate-keypair
 symfony server:start -d
 ***
 
-##Angular
+## Angular
 ***
 cd frontend
 npm install

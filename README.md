@@ -24,6 +24,8 @@ symfony server:start -d
 ## Angular
 ***
 cd frontend
+
 npm install
+
 ng serve
 ***
